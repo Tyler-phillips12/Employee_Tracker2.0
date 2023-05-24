@@ -18,8 +18,8 @@
   },
   "homepage": "https://github.com/Tyler-phillips12/Employee_Tracker2.0#readme",
   "dependencies": {
+    "console.table": "^0.10.0",
     "inquirer": "^8.2.4",
-    "mysql2": "^3.3.1",
-    "console.table": "^0.10.0"
+    "mysql2": "^3.3.1"
   }
 }
