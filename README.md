@@ -3,7 +3,7 @@
 This command-line application is designed to manage employee information within a database. It provides various options to view, add, and update departments, roles, and employees. The application accepts user input through the command line interface and interacts with the database accordingly.
 
 # Screenshot
-<img width="2560" alt="2023-05-24" src="https://github.com/Tyler-phillips12/Employee_Tracker2.0/assets/123614404/48bb1a7f-f150-4f0c-9904-1c4007586747">
+<img width="1273" alt="emplopyee_tracker" src="https://github.com/Tyler-phillips12/Employee_Tracker2.0/assets/123614404/346e4538-8603-4ee9-9f42-bd25f2f979e5">
 
 # Installation
 To use this application, follow these steps:
