@@ -108,79 +108,84 @@ const addDept = () => {
 };
 
 const addRole = () => {
-  const deptChoices = () => connection.promise().query(`SELECT * FROM department`)
-      .then((rows) => {
-          let arrNames = rows[0].map(obj => obj.name);
-          return arrNames
-      })
-  inquirer
+  const deptChoices = () => connection.promise().query(`SELECT * FROM departments`)
+    .then((rows) => {
+      let arrNames = rows[0].map(obj => obj.name);
+      return arrNames;
+    });
+
+  deptChoices().then(choices => {
+    inquirer
       .prompt([
-          {
-              type: "input",
-              message: "What is the title of the role you'd like to add?",
-              name: "roleTitle"
-          },
-          {
-              type: "input",
-              message: "What is the salary for this role?",
-              name: "roleSalary"
-          },
-          {
-              type: "list",
-              message: "Which department is this role in?",
-              name: "addDept",
-              choices: deptChoices
-          }
+        {
+          type: "input",
+          message: "What is the title of the role you'd like to add?",
+          name: "roleTitle"
+        },
+        {
+          type: "input",
+          message: "What is the salary for this role?",
+          name: "roleSalary"
+        },
+        {
+          type: "list",
+          message: "Which department is this role in?",
+          name: "addDept",
+          choices: choices
+        }
       ]).then(ans => {
-          connection.promise().query(`SELECT id FROM department WHERE name = ?`, ans.addDept)
-              .then(answer => {
-                  let mappedId = answer[0].map(obj => obj.id);
-                  return mappedId[0]
-              })
-              .then((mappedId) => {
-                  connection.promise().query(`INSERT INTO roles(title, salary, department_id)
+        connection.promise().query(`SELECT id FROM departments WHERE name = ?`, ans.addDept)
+          .then(answer => {
+            let mappedId = answer[0].map(obj => obj.id);
+            return mappedId[0];
+          })
+          .then((mappedId) => {
+            connection.promise().query(`INSERT INTO roles(title, salary, department_id)
               VALUES(?, ?, ?)`, [ans.roleTitle, ans.roleSalary, mappedId]);
-                  init()
-              })
-      })
+            init();
+          });
+      });
+  });
 };
 
 const addEmployee = () => {
-   const rollChoices = () => connection.promise().query(`SELECT * FROM roles`)
-   .then((rows) => {
-       let arrNames = rows[0].map(obj => obj.name);
-       return arrNames
-   })
-  inquirer
+  const rollChoices = () => connection.promise().query(`SELECT * FROM roles`)
+    .then((rows) => {
+      let arrNames = rows[0].map(obj => obj.title);
+      return arrNames;
+    });
+
+  rollChoices().then(choices => {
+    inquirer
       .prompt([
-          {
-              type: "input",
-              message: "What is the employee's first name?",
-              name: "firstName"
-          },
-          {
-              type: "input",
-              message: "What is the employee's last name?",
-              name: "lastName"
-          },
-           {
-               type: "list",
-               message: "What is the employee's role?",
-               name: "employeeRole",
-               choices: rollChoices
-           }
+        {
+          type: "input",
+          message: "What is the employee's first name?",
+          name: "firstName"
+        },
+        {
+          type: "input",
+          message: "What is the employee's last name?",
+          name: "lastName"
+        },
+        {
+          type: "list",
+          message: "What is the employee's role?",
+          name: "employeeRole",
+          choices: choices
+        }
       ]).then(ans => {
-          connection.query(`INSERT INTO employees(first_name, last_name)
-                  VALUES(?, ?)`, [ans.firstName, ans.lastName], (err, results) => {
-              if (err) {
-                  console.log(err)
-              } else {
-                  connection.query(`SELECT * FROM employees`, (err, results) => {
-                      err ? console.error(err) : console.table(results);
-                      init();
-                  })
-              }
+        connection.query(`INSERT INTO employees(first_name, last_name, role_id)
+                  VALUES(?, ?, (SELECT id FROM roles WHERE title = ?))`, [ans.firstName, ans.lastName, ans.employeeRole], (err, results) => {
+          if (err) {
+            console.log(err);
+          } else {
+            connection.query(`SELECT * FROM employees`, (err, results) => {
+              err ? console.error(err) : console.table(results);
+              init();
+            });
           }
-          )
-      })
-}
+        });
+      });
+  });
+};
